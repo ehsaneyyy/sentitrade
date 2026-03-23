@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 
-export default function TransactionCard({ transaction, index }) {
+export default function TransactionCard({ transaction, index, onDelete }) {
   const isFraud = transaction.is_fraud;
   const sentiment = transaction.sentiment;
 
@@ -14,6 +14,7 @@ export default function TransactionCard({ transaction, index }) {
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9 }}
       transition={{ duration: 0.4, delay: index * 0.1 }}
       whileHover={{ y: -5, scale: 1.02 }}
       className={`glass rounded-2xl p-5 relative overflow-hidden cursor-pointer ${isFraud ? "border-red-500/50 glow-red" : "glow-blue"}`}
@@ -26,19 +27,27 @@ export default function TransactionCard({ transaction, index }) {
             <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Amount</p>
             <p className="text-2xl font-bold text-white">${transaction.amount.toLocaleString()}</p>
           </div>
-          {isFraud ? (
-            <motion.span
-              animate={{ opacity: [1, 0.5, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="bg-red-500/20 text-red-400 border border-red-500/50 text-xs px-3 py-1 rounded-full font-bold"
+          <div className="flex items-center gap-2">
+            {isFraud ? (
+              <motion.span
+                animate={{ opacity: [1, 0.5, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="bg-red-500/20 text-red-400 border border-red-500/50 text-xs px-3 py-1 rounded-full font-bold"
+              >
+                FRAUD
+              </motion.span>
+            ) : (
+              <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1 rounded-full font-bold">
+                CLEAN
+              </span>
+            )}
+            <button
+              onClick={() => onDelete(transaction.id)}
+              className="text-gray-600 hover:text-red-400 transition text-xl leading-none ml-1"
             >
-              FRAUD
-            </motion.span>
-          ) : (
-            <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1 rounded-full font-bold">
-              CLEAN
-            </span>
-          )}
+              ×
+            </button>
+          </div>
         </div>
 
         <div className="flex justify-between items-center mt-4">

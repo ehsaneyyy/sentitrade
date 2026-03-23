@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.models import Transaction
@@ -13,7 +13,6 @@ router = APIRouter()
 def create_transaction(transaction: TransactionCreate, db: Session = Depends(get_db)):
     is_fraud = detect_fraud(transaction.amount)
     sentiment = analyze_sentiment(str(transaction.amount))
-    
     db_transaction = Transaction(
         amount=transaction.amount,
         user_id=transaction.user_id,
@@ -28,3 +27,12 @@ def create_transaction(transaction: TransactionCreate, db: Session = Depends(get
 @router.get("/transactions", response_model=List[TransactionResponse])
 def get_transactions(db: Session = Depends(get_db)):
     return db.query(Transaction).all()
+
+@router.delete("/transactions/{transaction_id}")
+def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
+    transaction = db.query(Transaction).filter(Transaction.id == transaction_id).first()
+    if not transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    db.delete(transaction)
+    db.commit()
+    return {"message": "Transaction deleted"}

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db.database import get_db
 from app.models.models import News
@@ -11,7 +11,6 @@ router = APIRouter()
 @router.post("/news", response_model=NewsResponse)
 def create_news(news: NewsCreate, db: Session = Depends(get_db)):
     sentiment = analyze_sentiment(news.headline)
-    
     db_news = News(
         headline=news.headline,
         sentiment=sentiment
@@ -24,3 +23,12 @@ def create_news(news: NewsCreate, db: Session = Depends(get_db)):
 @router.get("/news", response_model=List[NewsResponse])
 def get_news(db: Session = Depends(get_db)):
     return db.query(News).all()
+
+@router.delete("/news/{news_id}")
+def delete_news(news_id: int, db: Session = Depends(get_db)):
+    news = db.query(News).filter(News.id == news_id).first()
+    if not news:
+        raise HTTPException(status_code=404, detail="News not found")
+    db.delete(news)
+    db.commit()
+    return {"message": "News deleted"}

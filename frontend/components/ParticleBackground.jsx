@@ -15,8 +15,19 @@ export default function ParticleBackground() {
   const options = useMemo(() => ({
     background: { color: { value: "transparent" } },
     fpsLimit: 60,
+    interactivity: {
+      detectsOn: "window",
+      events: {
+        onHover: { enable: true, mode: "grab" },
+        onClick: { enable: true, mode: "push" },
+      },
+      modes: {
+        grab: { distance: 200, links: { opacity: 0.8 } },
+        push: { quantity: 3 },
+      },
+    },
     particles: {
-      number: { value: 80, density: { enable: true } },
+      number: { value: 60, density: { enable: true } },
       color: { value: ["#3b82f6", "#06b6d4", "#6366f1"] },
       links: {
         enable: true,
@@ -27,10 +38,10 @@ export default function ParticleBackground() {
       },
       move: {
         enable: true,
-        speed: 0.8,
+        speed: 0.6,
         outModes: { default: "bounce" },
       },
-      opacity: { value: 0.4 },
+      opacity: { value: 0.5 },
       shape: { type: "circle" },
       size: { value: { min: 1, max: 3 } },
     },
@@ -50,7 +61,6 @@ export default function ParticleBackground() {
         width: "100%",
         height: "100%",
         zIndex: 0,
-        pointerEvents: "none",
       }}
     />
   );

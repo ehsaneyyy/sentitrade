@@ -14,6 +14,12 @@ export async function createTransaction(data) {
   return res.json();
 }
 
+export async function deleteTransaction(id) {
+  await fetch(`${BASE_URL}/transactions/${id}`, {
+    method: "DELETE",
+  });
+}
+
 export async function getNews() {
   const res = await fetch(`${BASE_URL}/news`);
   return res.json();
@@ -26,4 +32,10 @@ export async function createNews(data) {
     body: JSON.stringify(data),
   });
   return res.json();
+}
+
+export async function deleteNews(id) {
+  await fetch(`${BASE_URL}/news/${id}`, {
+    method: "DELETE",
+  });
 }
